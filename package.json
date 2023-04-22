@@ -1,15 +1,19 @@
 {
-  "name": "react-homework-template",
+  "name": "goit-react-hw-04-image-finder",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://goitacademy.github.io/react-homework-template/",
+  "homepage": "https://gadgetadd.github.io/goit-react-hw-04-images/",
   "dependencies": {
     "@testing-library/jest-dom": "^5.16.3",
     "@testing-library/react": "^12.1.4",
     "@testing-library/user-event": "^13.5.0",
+    "axios": "^1.3.5",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
     "react-scripts": "5.0.1",
+    "react-spinners": "^0.13.8",
+    "react-toastify": "^9.1.2",
+    "validator": "^13.9.0",
     "web-vitals": "^2.1.3"
   },
   "scripts": {
