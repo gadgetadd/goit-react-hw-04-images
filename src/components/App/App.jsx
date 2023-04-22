@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import { useState, useEffect } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.min.css';
 
@@ -10,50 +10,59 @@ import { Button } from '../Button/Button';
 import { Placeholder } from '../Placeholder/Placeholder';
 import css from './App.module.css';
 
-export class App extends Component {
-  state = {
-    search: '',
-    total: null,
-    images: [],
-    page: 1,
-    loading: false,
-  };
+export const App = () => {
+  const [search, setSearch] = useState('');
+  const [total, setTotal] = useState(null);
+  const [images, setImages] = useState([]);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
+  const isMore = images.length !== 0 && images.length < total && !loading;
+  const isEmpty = images.length === 0 && !loading;
 
-  componentDidUpdate(_, prevState) {
-    const { total, images, search, page, loading } = this.state;
-    const isFetch = prevState.search !== search || prevState.page !== page;
-    const isFetched =
-      prevState.images !== images && prevState.loading !== loading;
-    isFetch && this.handleFetch();
-    isFetched &&
-      toast(
-        `We found ${images.length} out of ${total} images matching "${search}"`
-      );
-  }
+  useEffect(() => {
+    const handleFetch = async () => {
+      setLoading(true);
+      try {
+        const searchData = await fetchImages(search, page);
+        setImages(prev => [...prev, ...searchData.results]);
+        setTotal(searchData.total);
+      } catch {
+        toast.error('Something went wrong. Please, try again');
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  handleFetch = async () => {
-    const { search, page } = this.state;
-    this.setState({ loading: true });
-    try {
-      const searchData = await fetchImages(search, page);
-      this.setState(({ images }) => ({
-        images: [...images, ...searchData.results],
-        total: searchData.total,
-      }));
-    } catch {
-      toast.error('Something went wrong. Please, try again');
-    } finally {
-      this.setState({ loading: false });
+    if (search !== '') {
+      handleFetch();
     }
-  };
+  }, [page, search]);
 
-  handleSubmit = search => {
-    if (this.state.search !== search) {
-      this.setState({
-        search,
-        page: 1,
-        images: [],
-      });
+  useEffect(() => {
+    switch (total) {
+
+      case null:
+        return;
+      
+      case 0:
+        toast(`We couldn't find any images matching "${search}"`);
+        break;
+      
+      default:
+        if (images.length !== 0) {
+          toast(
+            `We found ${images.length} out of ${total} images matching "${search}"`
+          );
+        }
+        break;
+    }
+  }, [images.length, search, total]);
+
+  const handleSubmit = newSearch => {
+    if (search !== newSearch) {
+      setSearch(newSearch);
+      setPage(1);
+      setImages([]);
     } else {
       toast(
         `We've already searched for images matching "${search}".
@@ -62,28 +71,17 @@ export class App extends Component {
     }
   };
 
-  handleLoadMore = () => {
-    this.setState(({ page }) => ({
-      page: page + 1,
-    }));
+  const handleLoadMore = () => {
+    setPage(prev => prev + 1);
   };
 
-  render() {
-    const { images, loading, total } = this.state;
-    const isMore = images.length !== 0 && images.length < total && !loading;
-    const isEmpty = images.length === 0 && !loading;
-    return (
-      <div className={css.App}>
-        <Searchbar onSubmit={this.handleSubmit} />
-        {isEmpty ? (
-          <Placeholder />
-        ) : (
-          <ImageGallery images={this.state.images} />
-        )}
-        {loading && <Loader />}
-        {isMore && <Button onLoadMore={this.handleLoadMore} />}
-        <ToastContainer />
-      </div>
-    );
-  }
-}
+  return (
+    <div className={css.App}>
+      <Searchbar onSubmit={handleSubmit} />
+      {isEmpty ? <Placeholder /> : <ImageGallery images={images} />}
+      {loading && <Loader />}
+      {isMore && <Button onLoadMore={handleLoadMore} />}
+      <ToastContainer />
+    </div>
+  );
+};

@@ -11,12 +11,10 @@ export const fetchImages = async (query, page) => {
     page,
     per_page: 12,
   };
-  try {
-    const response = await axios.get(BASE_URL, { params: options });
-    return normalizePixabayData(response.data);
-  } catch {
-    throw new Error('data retrieval error');
-  }
+
+  const response = await axios.get(BASE_URL, { params: options });
+  return normalizePixabayData(response.data);
+
 }
 
 const normalizePixabayData = (data) => {
