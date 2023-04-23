@@ -7,12 +7,14 @@ export const ImageGalleryItem = ({ link, descr, full }) => {
   const [modal, setModal] = useState(null);
 
   return (
-    <li className={css.ImageGalleryItem} onClick={() => setModal(full)}>
-      <img className={css['ImageGalleryItem-image']} src={link} alt={descr} />
+    <>
+      <li className={css.ImageGalleryItem} onClick={() => setModal(full)}>
+        <img className={css['ImageGalleryItem-image']} src={link} alt={descr} />
+      </li>
       {modal && (
         <Modal link={full} descr={descr} onClose={() => setModal(null)} />
       )}
-    </li>
+    </>
   );
 };
 
