@@ -44,9 +44,3 @@ export class Modal extends Component {
     );
   }
 }
-
-Modal.propTypes = {
-  descr: PropTypes.string.isRequired,
-  link: PropTypes.string.isRequired,
-  onClose: PropTypes.func.isRequired,
-};
