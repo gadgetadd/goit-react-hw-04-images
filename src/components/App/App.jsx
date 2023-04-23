@@ -40,14 +40,13 @@ export const App = () => {
 
   useEffect(() => {
     switch (total) {
-
       case null:
         return;
-      
+
       case 0:
         toast(`We couldn't find any images matching "${search}"`);
         break;
-      
+
       default:
         if (images.length !== 0) {
           toast(
@@ -63,6 +62,7 @@ export const App = () => {
       setSearch(newSearch);
       setPage(1);
       setImages([]);
+      setTotal(null);
     } else {
       toast(
         `We've already searched for images matching "${search}".
